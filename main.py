@@ -1,16 +1,12 @@
 from flask import Flask
+from flask.templating import render_template
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def Hell():
-    return "Hello!"
-
-
-@app.route("/example")
-def exa():
-    return "<h1> This is an example </h1>"
+    return render_template("index.jinja", message="This is an renderd template")
 
 
 if __name__ == "__main__":
