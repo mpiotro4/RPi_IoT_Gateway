@@ -5,8 +5,18 @@ app = Flask(__name__)
 
 
 @app.route("/")
-def Hell():
-    return render_template("index.jinja", message="This is an renderd template")
+def dashboard():
+    return render_template("index.jinja", message="Witaj świecie!")
+
+
+@app.route("/nodes/create")
+def create_node():
+    return render_template("create_node.jinja")
+
+
+@app.route("/nodes/show")
+def show_nodes():
+    return render_template("show_nodes.jinja")
 
 
 if __name__ == "__main__":
