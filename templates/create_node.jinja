@@ -2,6 +2,14 @@
 {% block title %} Dodaj węzeł {% endblock %}
 {% block content %}
 <div>
-    <p>{{ message }}</p>
+    <form method="post" action="{{ url_for('create_node') }}">
+        <div style="width: 360px">
+            <div class="from-group">
+                <label>Adres MAC węzła:</label>
+                <input type="text" onsubmit="" class="form-control" name="mac_address" required>
+            </div>
+            <button type="submit" class="btn btn-secondary mt-2">Dalej</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

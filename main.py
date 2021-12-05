@@ -1,5 +1,7 @@
 from flask import Flask
 from flask.templating import render_template
+from flask import request
+import subprocess
 
 app = Flask(__name__)
 
@@ -9,9 +11,16 @@ def dashboard():
     return render_template("index.jinja", message="Witaj świecie!")
 
 
-@app.route("/nodes/create")
+@app.route("/nodes/create", methods=['GET', 'POST'])
 def create_node():
-    return render_template("create_node.jinja")
+    if request.method == 'GET':
+        return render_template("create_node.jinja")
+    if request.method == 'POST':
+        proc = subprocess.Popen(
+            ['python', 'dupa.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output = proc.communicate()[0].decode()
+        mac_address = request.form['mac_address']
+        return render_template("create_node_summary.jinja", mac_address=output)
 
 
 @app.route("/nodes/show")
