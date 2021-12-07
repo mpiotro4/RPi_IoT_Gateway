@@ -6,6 +6,7 @@ import os.path
 import sqlite3 as sql
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "storage.db")
 
 app = Flask(__name__)
 
@@ -26,14 +27,24 @@ def create_node():
         name = 'no name'
         mac_address = request.form['mac_address']
         if(True):
-            pass
-
-        return render_template("create_node_summary.jinja", output=output)
+            try:
+                with sql.connect(db_path) as con:
+                    cur = con.cursor()
+                    cur.execute(
+                        f"INSERT INTO nodes VALUES(null, '{name }', '{mac_address}')"
+                    )
+                    con.commit()
+                    con.close()
+                    msg = "Record successfully added"
+            except:
+                con.rollback()
+                msg = "error in insert operation"
+            finally:
+                return render_template("create_node_summary.jinja", output=output, msg=msg)
 
 
 @app.route("/nodes/show")
 def show_nodes():
-    db_path = os.path.join(BASE_DIR, "storage.db")
     con = sql.connect(db_path)
     con.row_factory = sql.Row
     cur = con.cursor()
