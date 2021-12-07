@@ -1,7 +1,35 @@
 {% extends "base.jinja" %}
 {% block title %} Zarządzaj węzłami {% endblock %}
 {% block content %}
-<div>
-    <p>{{ message }}</p>
-</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script>
+$(document).ready(function() {
+    $(".read").click(function(){
+        alert('read ' + $(this).data('val'));
+    });
+    $(".delete").click(function(){
+        alert('delete ' + $(this).data('val'));
+    });
+});
+</script>
+<table class="table">
+         <thead>
+            <td>id</td>
+            <td>nazwa</td>
+            <td>Adres MAC</td>
+            <td>Akcje </td>
+         </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row["node_id"]}}</td>
+               <td>{{row["name"]}}</td>
+               <td> {{ row["mac_address"]}}</td>
+               <td>
+                    <button type="button" class="btn btn-secondary read" data-val="{{row['node_id']}}">Podgląd</button>
+                    <button type="button" class="btn btn-danger delete" data-val="{{row['node_id']}}">Usuń</button>
+               </td>	
+            </tr>
+         {% endfor %}
+</table>
 {% endblock %}

@@ -2,6 +2,10 @@ from flask import Flask
 from flask.templating import render_template
 from flask import request
 import subprocess
+import os.path
+import sqlite3 as sql
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
 
@@ -17,15 +21,25 @@ def create_node():
         return render_template("create_node.jinja")
     if request.method == 'POST':
         proc = subprocess.Popen(
-            ['python', 'dupa.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            ['python3', f'/home/pi/ctl_wrapper/main.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output = proc.communicate()[0].decode()
+        name = 'no name'
         mac_address = request.form['mac_address']
-        return render_template("create_node_summary.jinja", mac_address=output)
+        if(True):
+            pass
+
+        return render_template("create_node_summary.jinja", output=output)
 
 
 @app.route("/nodes/show")
 def show_nodes():
-    return render_template("show_nodes.jinja")
+    db_path = os.path.join(BASE_DIR, "storage.db")
+    con = sql.connect(db_path)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    cur.execute("select * from nodes")
+    rows = cur.fetchall()
+    return render_template("show_nodes.jinja", rows=rows)
 
 
 if __name__ == "__main__":
