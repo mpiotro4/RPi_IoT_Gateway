@@ -1,0 +1,10 @@
+{% extends "base.jinja" %}
+{% block title %} Węzeł nr. {{ node_id }} {% endblock %}
+{% block content %}
+<div style="width: 360px">
+    <label> Nazwa węzła: {{ row['name'] }} </label> <br>
+    <label> Adres MAC: {{ row['mac_address'] }} </label> <br>
+    <label> Typ węzła: {{ row['direction'] }} </label> <br>
+    <label> Funkcje węzła: {{ row['functions'] }} </label>
+</div>
+{% endblock %}

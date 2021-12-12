@@ -2,32 +2,49 @@
 {% block title %} Zarządzaj węzłami {% endblock %}
 {% block content %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
 <script>
 $(document).ready(function() {
-    $(".read").click(function(){
-        alert('read ' + $(this).data('val'));
-    });
-    $(".delete").click(function(){
-        alert('delete ' + $(this).data('val'));
+    $(".delete").click(function(e){
+        var dupa = $(this).data('val');
+        e.preventDefault();
+        if (window.confirm(`Czy jesteś pewien że chcesz usunąć węzeł o id ${$(this).data('val')}?`)) {
+        $.ajax(
+            {
+            method: "delete",
+            url:  `{{ url_for('delete_node', user_node_id='') }}/${dupa}`
+        })
+        .done(function (data) {
+            alert(data);
+            window.location.reload();
+        })
+        .fail(function (data) {
+            alert('Ajax request failed')
+        });
+        }
     });
 });
+
 </script>
 <table class="table">
          <thead>
             <td>id</td>
             <td>nazwa</td>
             <td>Adres MAC</td>
-            <td>Akcje </td>
+            <td>Funkcje</td>
+            <td>Akcje</td>
          </thead>
-         
          {% for row in rows %}
             <tr>
-               <td>{{row["node_id"]}}</td>
+               <td>{{row["user_node_id"]}}</td>
                <td>{{row["name"]}}</td>
                <td> {{ row["mac_address"]}}</td>
+                <td> {{ row["functions"]}}</td>
                <td>
-                    <button type="button" class="btn btn-secondary read" data-val="{{row['node_id']}}">Podgląd</button>
-                    <button type="button" class="btn btn-danger delete" data-val="{{row['node_id']}}">Usuń</button>
+                    <a href="{{ url_for('read_node', node_id=row['user_node_id']) }}"> 
+                        <button type="button"class="btn btn-secondary read" data-val="{{row['user_node_id']}}">Podgląd</button>
+                    </a>
+                    <button type="button" class="btn btn-danger delete" data-val="{{row['user_node_id']}}">Usuń</button>
                </td>	
             </tr>
          {% endfor %}
