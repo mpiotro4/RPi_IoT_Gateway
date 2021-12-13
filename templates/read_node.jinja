@@ -1,10 +1,34 @@
 {% extends "base.jinja" %}
 {% block title %} Węzeł nr. {{ node_id }} {% endblock %}
 {% block content %}
-<div style="width: 360px">
-    <label> Nazwa węzła: {{ row['name'] }} </label> <br>
-    <label> Adres MAC: {{ row['mac_address'] }} </label> <br>
-    <label> Typ węzła: {{ row['direction'] }} </label> <br>
-    <label> Funkcje węzła: {{ row['functions'] }} </label>
+ <div class="row">
+    <div class="col">
+        <div>
+            <label> Nazwa węzła: {{ row['name'] }} </label> <br>
+            <label> Adres MAC: {{ row['mac_address'] }} </label> <br>
+            <label> Typ węzła: {{ row['direction'] }} </label> <br>
+            <label> Funkcje węzła: {{ row['functions'] }} </label>
+        </div>
+    </div>
+    {% if measurements %} 
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <td>Data</td>
+                    <td> {{ row['description'] }} [{{ row['unit'] }}] </td>
+                </thead>
+                <tbody>
+                    {% for measure in measurements %}
+                        <tr>
+                            <td> {{ measure['date_time'] }} </td>
+                            <td> {{ measure['measure'] }} </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 </div>
+
+
 {% endblock %}

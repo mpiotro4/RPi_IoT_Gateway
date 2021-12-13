@@ -63,14 +63,19 @@ def read_node(node_id):
             name,
             mac_address,
             functions,
-            direction
+            direction,
+            unit,
+            description
         from user_nodes
         JOIN nodes USING (node_id)
         JOIN manufactured_nodes USING (manufactured_node_id)
         WHERE user_node_id = {node_id}
         """)
         row = cur.fetchall()
-        return render_template("read_node.jinja", node_id=node_id, row=row[0])
+        cur.execute(
+            f"""SELECT * from measurements WHERE user_node_id = {node_id} """)
+        measurements = cur.fetchall()
+        return render_template("read_node.jinja", node_id=node_id, row=row[0], measurements=measurements)
 
 
 @app.route("/nodes/delete/<user_node_id>", methods=['DELETE'])

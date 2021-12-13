@@ -27,26 +27,26 @@ $(document).ready(function() {
 
 </script>
 <table class="table">
-         <thead>
+        <thead>
             <td>id</td>
             <td>nazwa</td>
             <td>Adres MAC</td>
             <td>Funkcje</td>
             <td>Akcje</td>
-         </thead>
-         {% for row in rows %}
+        </thead>
+        {% for row in rows %}
             <tr>
-               <td>{{row["user_node_id"]}}</td>
-               <td>{{row["name"]}}</td>
-               <td> {{ row["mac_address"]}}</td>
-                <td> {{ row["functions"]}}</td>
-               <td>
+                <td>{{row["user_node_id"]}}</td>
+                <td>{{row["name"]}}</td>
+                <td>{{ row["mac_address"]}}</td>
+                <td>{{ row["functions"]}}</td>
+                <td>
                     <a href="{{ url_for('read_node', node_id=row['user_node_id']) }}"> 
                         <button type="button"class="btn btn-secondary read" data-val="{{row['user_node_id']}}">Podgląd</button>
                     </a>
                     <button type="button" class="btn btn-danger delete" data-val="{{row['user_node_id']}}">Usuń</button>
-               </td>	
+                </td>	
             </tr>
-         {% endfor %}
+        {% endfor %}
 </table>
 {% endblock %}

@@ -23,15 +23,17 @@ cur.executescript("""
         node_id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         direction TEXT NOT NULL,
-        functions TEXT NOT NULL
+        functions TEXT NOT NULL,
+        unit TEXT,
+        description TEXT
     );
-   insert into nodes (name, direction, functions) values ( 'Węzeł testowy', 'Wyjścia', 'pomiar');
+   insert into nodes (name, direction, functions, unit, description) values ( 'Węzeł testowy', 'Wyjścia', 'pomiar', 'jednostka', 'wartość');
     """)
 
 cur.executescript("""
     create table manufactured_nodes(
         manufactured_node_id INTEGER PRIMARY KEY,
-        node_id INTEEGER NOT NULL,
+        node_id INTEGER NOT NULL,
         mac_address TEXT NOT NULL UNIQUE,
         pin TEXT NOT NULL
     );
@@ -42,12 +44,35 @@ cur.executescript("""
 cur.executescript("""
     create table user_nodes(
         user_node_id INTEGER PRIMARY KEY,
-        manufactured_node_id INTEEGER NOT NULL,
-        node_id INTEEGER NOT NULL
+        manufactured_node_id INTEGER NOT NULL,
+        node_id INTEGER NOT NULL
     );
     insert into user_nodes (manufactured_node_id, node_id) values ('1', '1');
     insert into user_nodes (manufactured_node_id, node_id) values ('2', '1');
     """)
+
+cur.executescript("""
+    create table measurements(
+        measurement_id INTEGER PRIMARY KEY,
+        user_node_id INTEGER NOT NULL,
+        measure REAL,
+        date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    insert into measurements (user_node_id, measure) values ('1', '36.6');
+    """)
+
 
 # display the data in the table by
 # executing the cursor object
@@ -83,12 +108,8 @@ cur.execute("""
     """)
 print(cur.fetchall())
 
-print("############")
-
+print('measurements table: ')
 cur.execute("""
-    SELECT 
-        node_id
-    from manufactured_nodes
-    WHERE mac_address = "00:00:00:00aasd:00:00"
+    SELECT * FROM measurements
     """)
 print(cur.fetchall())
