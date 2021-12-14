@@ -45,10 +45,10 @@ cur.executescript("""
     create table user_nodes(
         user_node_id INTEGER PRIMARY KEY,
         manufactured_node_id INTEGER NOT NULL,
-        node_id INTEGER NOT NULL
+        node_id INTEGER NOT NULL,
+        port INTEGER NOT NULL
     );
-    insert into user_nodes (manufactured_node_id, node_id) values ('1', '1');
-    insert into user_nodes (manufactured_node_id, node_id) values ('2', '1');
+    insert into user_nodes (manufactured_node_id, node_id, port) values ('1', '1', '0');
     """)
 
 cur.executescript("""
@@ -58,18 +58,6 @@ cur.executescript("""
         measure REAL,
         date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
-    insert into measurements (user_node_id, measure) values ('1', '36.6');
     insert into measurements (user_node_id, measure) values ('1', '36.6');
     """)
 

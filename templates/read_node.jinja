@@ -6,8 +6,9 @@
         <div>
             <label> Nazwa węzła: {{ row['name'] }} </label> <br>
             <label> Adres MAC: {{ row['mac_address'] }} </label> <br>
+            <label> Port: {{ row['port'] }} </label> <br>
             <label> Typ węzła: {{ row['direction'] }} </label> <br>
-            <label> Funkcje węzła: {{ row['functions'] }} </label>
+            <label> Funkcje węzła:  <button type="button" class="btn btn-sm btn-secondary">{{ row['functions'] }}</button>  </label>
         </div>
     </div>
     {% if measurements %} 

@@ -26,8 +26,8 @@ def create_node():
         #     ['python3', f'/home/pi/ctl_wrapper/main.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # output = proc.communicate()[0].decode()
         output = "xd"
-        name = 'no name'
         mac_address = request.form['mac_address']
+        port = 1
         if(True):
             con = sql.connect(db_path)
             cur = con.cursor()
@@ -44,7 +44,7 @@ def create_node():
                 return render_template("create_node_summary.jinja", msg="Nie znaleziono węzła o podanym adresie MAC")
             else:
                 cur.execute(f"""
-                    INSERT INTO user_nodes (manufactured_node_id, node_id) VALUES('{output[0][1]}', '{output[0][0]}')
+                    INSERT INTO user_nodes (manufactured_node_id, node_id, port) VALUES('{output[0][1]}', '{output[0][0]}', {port})
                 """)
                 con.commit()
                 con.close()
@@ -65,7 +65,8 @@ def read_node(node_id):
             functions,
             direction,
             unit,
-            description
+            description,
+            port
         from user_nodes
         JOIN nodes USING (node_id)
         JOIN manufactured_nodes USING (manufactured_node_id)
@@ -84,6 +85,9 @@ def delete_node(user_node_id):
     cur = con.cursor()
     cur.execute(
         f'DELETE FROM user_nodes WHERE `user_node_id` = {user_node_id}')
+    con.commit()
+    cur.execute(
+        f'DELETE FROM measurements WHERE `user_node_id` = {user_node_id}')
     con.commit()
     con.close()
     return f"Węzeł o id {user_node_id} usunięty pomyślnie"
@@ -106,6 +110,14 @@ def show_nodes():
     """)
     rows = cur.fetchall()
     return render_template("show_nodes.jinja", rows=rows)
+
+
+@app.route("/nodes/measure/<user_node_id>", methods=['GET'])
+def capture_data(user_node_id):
+    # proc = subprocess.Popen(
+    #     ['python3', f'/home/pi/ctl_wrapper/main.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # output = proc.communicate()[0].decode()
+    return read_node(user_node_id)
 
 
 if __name__ == "__main__":
