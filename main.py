@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask.templating import render_template
 from flask import request
 import subprocess
@@ -8,6 +8,8 @@ import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "data_base.db")
+data_caputre_script_path = os.path.join(
+    BASE_DIR, "data_capture_scripts/ctl_wrapper/main.py")
 
 app = Flask(__name__)
 
@@ -114,10 +116,19 @@ def show_nodes():
 
 @app.route("/nodes/measure/<user_node_id>", methods=['GET'])
 def capture_data(user_node_id):
-    # proc = subprocess.Popen(
-    #     ['python3', f'/home/pi/ctl_wrapper/main.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # output = proc.communicate()[0].decode()
-    return read_node(user_node_id)
+    proc = subprocess.Popen(
+        ['python3', data_caputre_script_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = proc.communicate()[0].decode()
+    con = sql.connect(db_path)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    if output == "None":
+        cur.executescript(
+            f"""insert into measurements (user_node_id) values ('{user_node_id}');""")
+    else:
+        cur.executescript(
+            f"""insert into measurements (user_node_id, measure) values ('{user_node_id}', '{output}');""")
+    return redirect(url_for('read_node', node_id=user_node_id))
 
 
 if __name__ == "__main__":
