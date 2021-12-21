@@ -1,14 +1,32 @@
 {% extends "base.jinja" %}
 {% block title %} Węzeł nr. {{ node_id }} {% endblock %}
+
 {% block content %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
 <div class="row">
-    <div class="col">
+    <div class="col-xl-2 col-md-3 border-right border-left mr-2">
         <div>
             <label> Nazwa węzła: {{ row['name'] }} </label> <br>
             <label> Adres MAC: {{ row['mac_address'] }} </label> <br>
             <label> Port: {{ row['port'] }} </label> <br>
             <label> Typ węzła: {{ row['direction'] }} </label> <br>
-            <label> Funkcje węzła:  <a href="{{ url_for('capture_data', user_node_id=node_id) }}"> <button type="button" class="btn btn-sm btn-secondary">{{ row['functions'] }}</button> <a>  </label>
+            <label> Funkcje węzła:
+                {% if functions[0] is defined %}
+                    <br>  
+                    <a href="{{ url_for('capture_data', user_node_id=node_id) }}"> 
+                        <button type="button" class="btn btn-sm btn-secondary">{{ functions[0] }}</button>
+                       
+                    <a>
+                {% endif %}
+                {% if functions[1] is defined %}
+                    <br>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                        <label class="custom-control-label" for="customSwitch1">{{ functions[1] }}</label>
+                    </div>
+                {% endif %}  
+            </label>
         </div>
     </div>
     {% if measurements %} 
@@ -31,5 +49,36 @@
     {% endif %}
 </div>
 
-
+<script>
+$('input:checkbox').change(function(){
+    if($(this).is(':checked')){
+        alert('Checked');
+        $.ajax(
+            {
+            method: "GET",
+            url:  "{{ url_for('switch', user_node_id = 1, mode = 1) }}"
+        })
+        .done(function (data) {
+            alert("XD");
+        })
+        .fail(function (data) {
+            alert('Ajax request failed')
+        });
+    } else {
+        alert('Unchecked');
+         $.ajax(
+            {
+            method: "GET",
+            url:  "{{ url_for('switch', user_node_id = 1, mode = 0) }}"
+        })
+        .done(function (data) {
+            alert("XD");
+        })
+        .fail(function (data) {
+            alert('Ajax request failed')
+        });
+    }
+});
+</script>
 {% endblock %}
+

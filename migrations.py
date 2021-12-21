@@ -27,7 +27,7 @@ cur.executescript("""
         unit TEXT,
         description TEXT
     );
-   insert into nodes (name, direction, functions, unit, description) values ( 'Węzeł testowy', 'Wyjścia', 'pomiar', 'jednostka', 'wartość');
+   insert into nodes (name, direction, functions, unit, description) values ( 'Węzeł testowy', 'Wyjścia', 'pomiar,przełącznik', 'jednostka', 'wartość');
     """)
 
 cur.executescript("""

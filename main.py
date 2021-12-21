@@ -10,7 +10,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "data_base.db")
 data_caputre_script_path = os.path.join(
     BASE_DIR, "data_capture_scripts/ctl_wrapper/main.py")
-
+switch_script_patch = os.path.join(
+    BASE_DIR, "data_capture_scripts/ctl_wrapper/switch.py")
 app = Flask(__name__)
 
 
@@ -53,8 +54,8 @@ def create_node():
                 return render_template("create_node_summary.jinja", msg="Węzeł dodany pomyślnie")
 
 
-@app.route("/nodes/read/<node_id>", methods=['GET'])
-def read_node(node_id):
+@app.route("/nodes/read/<user_node_id>", methods=['GET'])
+def read_node(user_node_id):
     if request.method == 'GET':
         con = sql.connect(db_path)
         con.row_factory = sql.Row
@@ -72,13 +73,14 @@ def read_node(node_id):
         from user_nodes
         JOIN nodes USING (node_id)
         JOIN manufactured_nodes USING (manufactured_node_id)
-        WHERE user_node_id = {node_id}
+        WHERE user_node_id = {user_node_id}
         """)
         row = cur.fetchall()
         cur.execute(
-            f"""SELECT * from measurements WHERE user_node_id = {node_id} """)
+            f"""SELECT * from measurements WHERE user_node_id = {user_node_id} """)
         measurements = cur.fetchall()
-        return render_template("read_node.jinja", node_id=node_id, row=row[0], measurements=measurements)
+        functions = row[0]['functions'].split(',')
+        return render_template("read_node.jinja", node_id=user_node_id, row=row[0], measurements=measurements, functions=functions)
 
 
 @app.route("/nodes/delete/<user_node_id>", methods=['DELETE'])
@@ -116,20 +118,44 @@ def show_nodes():
 
 @app.route("/nodes/measure/<user_node_id>", methods=['GET'])
 def capture_data(user_node_id):
+    manufactured_node_id = db_select(
+        f"""SELECT manufactured_node_id FROM user_nodes where user_node_id = '{user_node_id}'""")[0]['manufactured_node_id']
+    mac_address = db_select(
+        f"""SELECT mac_address FROM manufactured_nodes where manufactured_node_id = '{manufactured_node_id}' """)[0]['mac_address']
     proc = subprocess.Popen(
-        ['python3', data_caputre_script_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        ['python3', data_caputre_script_path, mac_address], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = proc.communicate()[0].decode()
-    con = sql.connect(db_path)
-    con.row_factory = sql.Row
-    cur = con.cursor()
-    if output == "None":
-        cur.executescript(
-            f"""insert into measurements (user_node_id) values ('{user_node_id}');""")
-    else:
-        cur.executescript(
-            f"""insert into measurements (user_node_id, measure) values ('{user_node_id}', '{output}');""")
-    return redirect(url_for('read_node', node_id=user_node_id))
+    db_insert(
+        f"""insert into measurements (user_node_id, measure) values ('{user_node_id}', '{output}');""")
+    return redirect(url_for('read_node', user_node_id=user_node_id))
+
+
+@app.route("/nodes/switch/<user_node_id>/<mode>", methods=['GET'])
+def switch(user_node_id, mode):
+    manufactured_node_id = db_select(
+        f"""SELECT manufactured_node_id FROM user_nodes where user_node_id = '{user_node_id}'""")[0]['manufactured_node_id']
+    mac_address = db_select(
+        f"""SELECT mac_address FROM manufactured_nodes where manufactured_node_id = '{manufactured_node_id}' """)[0]['mac_address']
+    proc = subprocess.Popen(
+        ['python3', switch_script_patch, mode], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    return "jest git"
 
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
+
+
+def db_select(query):
+    con = sql.connect(db_path)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    cur.execute(query)
+    return cur.fetchall()
+
+
+def db_insert(query):
+    con = sql.connect(db_path)
+    con.row_factory = sql.Row
+    cur = con.cursor()
+    cur.executescript(query)
+    return cur.fetchall()

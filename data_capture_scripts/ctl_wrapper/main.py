@@ -1,5 +1,6 @@
 import serial_wrapper
 import bluetoothctl_wrapper
+import sys
 
 
 def get_measurement(mac_address, pin, port):
@@ -11,7 +12,8 @@ def get_measurement(mac_address, pin, port):
         print('Error')
 
 
-mac_address = '00:20:12:08:B6:73'
+#mac_address = '00:20:12:08:B6:73'
+mac_address = sys.argv[1]
 pin = '1234'
 port = 0
 get_measurement(mac_address, pin, port)

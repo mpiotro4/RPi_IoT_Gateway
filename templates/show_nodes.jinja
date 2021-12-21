@@ -41,7 +41,7 @@ $(document).ready(function() {
                 <td>{{ row["mac_address"]}}</td>
                 <td>{{ row["functions"]}}</td>
                 <td>
-                    <a href="{{ url_for('read_node', node_id=row['user_node_id']) }}"> 
+                    <a href="{{ url_for('read_node', user_node_id=row['user_node_id']) }}"> 
                         <button type="button"class="btn btn-secondary read" data-val="{{row['user_node_id']}}">Podgląd</button>
                     </a>
                     <button type="button" class="btn btn-danger delete" data-val="{{row['user_node_id']}}">Usuń</button>

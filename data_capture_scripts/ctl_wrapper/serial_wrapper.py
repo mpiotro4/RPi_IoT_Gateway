@@ -13,6 +13,12 @@ class SerialWrapper:
         self.ser.close()
         os.system(f'sudo rfcomm unbind rfcomm{self.port} {self.mac_address}')
 
+    def switch_on(self):
+        self.ser.write(bytes(b'1'))
+
+    def switch_off(self):
+        self.ser.write(bytes(b'0'))
+
     def readline(self):
         output = None
         try:
